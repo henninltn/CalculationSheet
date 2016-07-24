@@ -23,7 +23,7 @@ JDK1.8.0_92
 
 ## Usage
 
-- 四則演算
+#### 四則演算
 
 **input**
 ```
@@ -37,7 +37,7 @@ i[0] = 2 + 3
 o[0] = 5
 ```
 
-- 代入
+#### 代入
 
 **input**
 ```
@@ -55,7 +55,7 @@ o[0] = 2
 
 out/artifacts/CalculationSheet_jar/main.jar
 
-上記の場所に実行可能jarが配置されている
+上記の場所に実行可能jarが配置されている。
 
 ## Author
 
