@@ -1,11 +1,10 @@
 package com.github.henninltn.sheet;
 
 import com.github.henninltn.Evaluator;
+import com.github.henninltn.GlobalScope;
 
 import java.net.URL;
 import java.util.ResourceBundle;
-import java.util.Map;
-import java.util.HashMap;
 
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -28,7 +27,7 @@ public class Controller implements Initializable {
     private int inputCount,
                 outputCount;
 
-    private Map<String, Integer> globalScope;
+    private GlobalScope globalScope;
     private Evaluator evaluator;
 
     /**
@@ -43,7 +42,7 @@ public class Controller implements Initializable {
         inputCount = 0;
         outputCount = 0;
 
-        globalScope = new HashMap<>();
+        globalScope = new GlobalScope();
         evaluator = new Evaluator(globalScope);
 
         inputArea.setOnKeyPressed((event) -> {

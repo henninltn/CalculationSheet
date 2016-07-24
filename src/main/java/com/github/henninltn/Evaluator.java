@@ -3,9 +3,10 @@ package com.github.henninltn;
 import static com.github.henninltn.parsercombinator.Generators.*;
 import com.github.henninltn.parsercombinator.Parser;
 import com.github.henninltn.parsercombinator.Scanner;
+import sun.jvm.hotspot.debugger.windbg.ia64.WindbgIA64ThreadFactory;
 
+import java.math.BigDecimal;
 import java.util.List;
-import java.util.Map;
 import java.util.function.Function;
 
 /**
@@ -15,17 +16,17 @@ import java.util.function.Function;
 public class Evaluator {
 
     // 外部で生成した変数の用のスコープを参照するための変数
-    private Map<String, Integer> globalScope;
+    private GlobalScope globalScope;
 
     /**
      * グローバススコープへの参照を受け取る
      * @param globalScope
      */
-    public Evaluator(Map<String, Integer> globalScope) {
+    public Evaluator(GlobalScope globalScope) {
         this.globalScope = globalScope;
     }
 
-    private static final Function<List<Character>, Integer> toInt = chrList -> Integer.parseInt(Parser.toString(chrList));
+    private static final Function<List<Character>, BigDecimal> toBigDecimal = chrList -> BigDecimal.valueOf(Double.parseDouble(Parser.toString(chrList)));
     private static final Function<Object, String> toString = obj -> Parser.toString(obj);
 
     private static final Parser<String> variableName  = tryp(scnr -> {
@@ -38,12 +39,16 @@ public class Evaluator {
         return ret;
     });
 
-    private static final Parser<Integer> number = apply(toInt, many1(digit));
+    private static final Parser<BigDecimal> number = apply(toBigDecimal, many1(or(digit, char1('.'))));
 
-    private final Parser<Integer> variable = tryp(scnr -> {
+    private final Parser<BigDecimal> variable = tryp(scnr -> {
         String varName = variableName.parse(scnr);
-        if(!globalScope.containsKey(varName)) left("variable not existed").parse(scnr);
-        int ret = globalScope.get(varName);
+        BigDecimal ret = new BigDecimal(0);
+        try {
+            ret = globalScope.get(varName);
+        } catch (Exception e) {
+            left(e.getMessage()).parse(scnr);
+        }
         return ret;
     });
 
@@ -65,38 +70,38 @@ public class Evaluator {
     // 前方参照のためのラッパー
     // expr, term, factorが再帰的に定義されているため
     // ラムダ式は前方参照できないため無名クラス
-    private final Parser<Integer> factor = new Parser<Integer>() {
+    private final Parser<BigDecimal> factor = new Parser<BigDecimal>() {
         @Override
-        public Integer parse(Scanner scnr) throws Exception {
+        public BigDecimal parse(Scanner scnr) throws Exception {
             return factor_.parse(scnr);
         }
     };
 
     // EBNF: term = factor, {("*", factor) | ("/", factor)}
     @SuppressWarnings("unchecked")
-    private final Parser<Integer> term = Evaluator.<Integer>eval(factor, many(or(
-            char1('*').next(apply((y, z) -> z * y, factor)),
-            char1('/').next(apply((y, z) -> z / y, factor))
+    private final Parser<BigDecimal> term = Evaluator.<BigDecimal>eval(factor, many(or(
+            char1('*').next(apply((y, z) -> z.multiply(y), factor)),
+            char1('/').next(apply((y, z) -> z.divide(y), factor))
     )));
 
     // EBNF: expr = term, {("+", term) | ("-", term)}
     @SuppressWarnings("unchecked")
-    private final Parser<Integer> expr = Evaluator.<Integer>eval(term, many(or(
-            char1('+').next(apply((y, z) -> z + y, term)),
-            char1('-').next(apply((y, z) -> z - y, term))
+    private final Parser<BigDecimal> expr = Evaluator.<BigDecimal>eval(term, many(or(
+            char1('+').next(apply((y, z) -> z.add(y), term)),
+            char1('-').next(apply((y, z) -> z.subtract(y), term))
     )));
 
     // EBNF: factor = [spaces], ("(", expr, ")") | number | variable
     @SuppressWarnings("unchecked")
-    private final Parser<Integer> factor_ = spaces.next(
+    private final Parser<BigDecimal> factor_ = spaces.next(
             or(char1('(').next(expr).prev(char1(')')), number, variable)
     ).prev(spaces);
 
     // EBNF: assign = [spaces], variableName, [spaces], "=", expr
     @SuppressWarnings("unchecked")
-    private final Parser<Integer> assign = tryp((scnr) -> {
+    private final Parser<BigDecimal> assign = tryp((scnr) -> {
         String varName = spaces.next(variableName).prev(spaces).parse(scnr);
-        int value = char1('=').next(expr).parse(scnr);
+        BigDecimal value = char1('=').next(expr).parse(scnr);
         globalScope.put(varName, value);
         return value;
     });
@@ -110,13 +115,13 @@ public class Evaluator {
     public final String eval(String src) {
         Scanner scnr = new Scanner(src);
         try {
-            Parser ret;
-            if (src.matches(".*=.*")) {
-                ret = assign;
+            Parser prsr;
+            if (src.contains("=")) {
+                prsr = assign;
             } else {
-                ret = expr;
+                prsr = expr;
             }
-            return ret.parseToString(scnr);
+            return prsr.parseToString(scnr);
         } catch (Exception e) {
             e.printStackTrace();
             return e.getMessage();

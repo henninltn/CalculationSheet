@@ -3,8 +3,6 @@ package com.github.henninltn;
 import static com.github.henninltn.parsercombinator.Generators.*;
 import com.github.henninltn.parsercombinator.Parser;
 
-import java.util.Map;
-import java.util.HashMap;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
@@ -13,7 +11,7 @@ import java.lang.reflect.Method;
  */
 public class Test {
     public static void main(String[] args) {
-        Map<String, Integer> globalScope = new HashMap<>();
+        GlobalScope globalScope = new GlobalScope();
         Evaluator evaluator = new Evaluator(globalScope);
         try {
             parseTest((Parser)getPrivateField(evaluator, "number"), "123"          );

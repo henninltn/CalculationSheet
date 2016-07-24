@@ -3,6 +3,7 @@ package com.github.henninltn.parsercombinator;
 import java.lang.reflect.Array;
 import java.util.List;
 import java.util.ArrayList;
+import java.math.BigDecimal;
 
 /**
  * 1つの引数を取って結果を生成する
@@ -64,6 +65,12 @@ public interface Parser<T> {
             return sb.toString();
         } else if (obj instanceof List) {
             return toString(((List) obj).toArray());
+        } else if (obj instanceof BigDecimal) {
+            try {
+                return String.valueOf(((BigDecimal) obj).intValueExact());
+            } catch (ArithmeticException e) {
+                // 何もしない
+            }
         }
         return obj.toString();
     }
