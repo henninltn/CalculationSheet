@@ -249,7 +249,7 @@ public class Generators {
      * @return
      */
     public static final <T1, T2> Parser<T1> apply(Function<T2, T1> fn, Parser<T2> prsr) {
-        return s -> fn.apply(prsr.parse(s));
+        return scnr -> fn.apply(prsr.parse(scnr));
     }
 
     /**

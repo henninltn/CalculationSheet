@@ -67,9 +67,10 @@ public interface Parser<T> {
             return toString(((List) obj).toArray());
         } else if (obj instanceof BigDecimal) {
             try {
-                return String.valueOf(((BigDecimal) obj).intValueExact());
+                System.out.println("integer");
+                return ((BigDecimal) obj).toBigIntegerExact().toString();
             } catch (ArithmeticException e) {
-                // 何もしない
+                return String.valueOf(((BigDecimal) obj).doubleValue());
             }
         }
         return obj.toString();

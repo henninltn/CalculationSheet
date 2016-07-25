@@ -5,20 +5,40 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class GlobalScope {
+
+    public final static BigDecimal e = BigDecimal.valueOf(Math.E);
+    public final static BigDecimal pi = BigDecimal.valueOf(Math.PI);
+    public final static BigDecimal twoTimesPi = BigDecimal.valueOf(2).multiply(pi);
+    public final static BigDecimal halfTimesPi = pi.divide(BigDecimal.valueOf(2));
+    public final static BigDecimal three_halvesTimesPi = BigDecimal.valueOf(3).multiply(halfTimesPi);
+    public final static BigDecimal positiveInfinity = BigDecimal.valueOf(0.1)
+            .multiply(BigDecimal.valueOf(Integer.MAX_VALUE)).multiply(BigDecimal.valueOf(Integer.MAX_VALUE))
+            .multiply(BigDecimal.valueOf(Integer.MAX_VALUE)).multiply(BigDecimal.valueOf(Integer.MAX_VALUE))
+            .multiply(BigDecimal.valueOf(Integer.MAX_VALUE)).multiply(BigDecimal.valueOf(Integer.MAX_VALUE))
+            .multiply(BigDecimal.valueOf(Integer.MAX_VALUE)).multiply(BigDecimal.valueOf(Integer.MAX_VALUE))
+            .multiply(BigDecimal.valueOf(Integer.MAX_VALUE)).multiply(BigDecimal.valueOf(Integer.MAX_VALUE))
+            .multiply(BigDecimal.valueOf(Integer.MAX_VALUE)).multiply(BigDecimal.valueOf(Integer.MAX_VALUE))
+            .multiply(BigDecimal.valueOf(Integer.MAX_VALUE)).multiply(BigDecimal.valueOf(Integer.MAX_VALUE))
+            .multiply(BigDecimal.valueOf(Integer.MAX_VALUE)).multiply(BigDecimal.valueOf(Integer.MAX_VALUE))
+            .multiply(BigDecimal.valueOf(Integer.MAX_VALUE)).multiply(BigDecimal.valueOf(Integer.MAX_VALUE))
+            .multiply(BigDecimal.valueOf(Integer.MAX_VALUE)).multiply(BigDecimal.valueOf(Integer.MAX_VALUE))
+            .multiply(BigDecimal.valueOf(Integer.MAX_VALUE)).multiply(BigDecimal.valueOf(Integer.MAX_VALUE))
+            .multiply(BigDecimal.valueOf(Integer.MAX_VALUE)).multiply(BigDecimal.valueOf(Integer.MAX_VALUE))
+            .multiply(BigDecimal.valueOf(Integer.MAX_VALUE)).multiply(BigDecimal.valueOf(Integer.MAX_VALUE))
+            .multiply(BigDecimal.valueOf(Integer.MAX_VALUE)).multiply(BigDecimal.valueOf(Integer.MAX_VALUE))
+            .multiply(BigDecimal.valueOf(Integer.MAX_VALUE)).multiply(BigDecimal.valueOf(Integer.MAX_VALUE))
+            .multiply(BigDecimal.valueOf(Integer.MAX_VALUE)).multiply(BigDecimal.valueOf(Integer.MAX_VALUE))
+            .multiply(BigDecimal.valueOf(Integer.MAX_VALUE)).multiply(BigDecimal.valueOf(Integer.MAX_VALUE));
+    public final static BigDecimal negativeInfinity = positiveInfinity.negate();
+
     private Map<String, BigDecimal> scope;
 
     public GlobalScope() {
         scope = new HashMap<>();
-        scope.put("pi", BigDecimal.valueOf(Math.PI));
-        scope.put("e", BigDecimal.valueOf(Math.E));
-    }
-
-    public void put(String key, double value) {
-        scope.put(key, BigDecimal.valueOf(value));
-    }
-
-    public void put(String key, int value) {
-        scope.put(key, BigDecimal.valueOf(value));
+        scope.put("e", e);
+        scope.put("pi", pi);
+        scope.put("positiveInfinity", positiveInfinity);
+        scope.put("negativeInfinity", negativeInfinity);
     }
 
     public void put(String key, BigDecimal value) {

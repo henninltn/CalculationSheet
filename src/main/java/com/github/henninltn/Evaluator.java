@@ -3,10 +3,10 @@ package com.github.henninltn;
 import static com.github.henninltn.parsercombinator.Generators.*;
 import com.github.henninltn.parsercombinator.Parser;
 import com.github.henninltn.parsercombinator.Scanner;
-import sun.jvm.hotspot.debugger.windbg.ia64.WindbgIA64ThreadFactory;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.ArrayList;
 import java.util.function.Function;
 
 /**
@@ -29,7 +29,7 @@ public class Evaluator {
     private static final Function<List<Character>, BigDecimal> toBigDecimal = chrList -> BigDecimal.valueOf(Double.parseDouble(Parser.toString(chrList)));
     private static final Function<Object, String> toString = obj -> Parser.toString(obj);
 
-    private static final Parser<String> variableName  = tryp(scnr -> {
+    private static final Parser<String> identifier  = tryp(scnr -> {
         String ret = String.valueOf(alpha.parse(scnr));
         try {
             ret += Parser.toString(many1(alphaNum).parse(scnr));
@@ -42,8 +42,8 @@ public class Evaluator {
     private static final Parser<BigDecimal> number = apply(toBigDecimal, many1(or(digit, char1('.'))));
 
     private final Parser<BigDecimal> variable = tryp(scnr -> {
-        String varName = variableName.parse(scnr);
-        BigDecimal ret = new BigDecimal(0);
+        String varName = identifier.parse(scnr);
+        BigDecimal ret = BigDecimal.ZERO;
         try {
             ret = globalScope.get(varName);
         } catch (Exception e) {
@@ -81,7 +81,7 @@ public class Evaluator {
     @SuppressWarnings("unchecked")
     private final Parser<BigDecimal> term = Evaluator.<BigDecimal>eval(factor, many(or(
             char1('*').next(apply((y, z) -> z.multiply(y), factor)),
-            char1('/').next(apply((y, z) -> z.divide(y), factor))
+            char1('/').next(apply((y, z) -> z.divide(y, 20, BigDecimal.ROUND_HALF_UP), factor))
     )));
 
     // EBNF: expr = term, {("+", term) | ("-", term)}
@@ -91,16 +91,31 @@ public class Evaluator {
             char1('-').next(apply((y, z) -> z.subtract(y), term))
     )));
 
-    // EBNF: factor = [spaces], ("(", expr, ")") | number | variable
+    @SuppressWarnings("unchecked")
+    private final Parser<BigDecimal> function = tryp(scnr -> {
+        String funcName = identifier.parse(scnr);
+        BigDecimal ret = BigDecimal.ZERO;
+        List<BigDecimal> argList = new ArrayList<>();
+        argList.add(char1('(').next(expr).parse(scnr));
+        argList.addAll(many(char1(',').next(expr)).prev(char1(')')).parse(scnr));
+        try {
+            ret = BuiltinFunctions.callByString(funcName, argList.toArray(new BigDecimal[0]));
+        } catch (Exception e) {
+            left(e.getMessage()).parse(scnr);
+        }
+        return ret;
+    });
+
+    // EBNF: factor = [spaces], ("(", expr, ")") | number | variable | function
     @SuppressWarnings("unchecked")
     private final Parser<BigDecimal> factor_ = spaces.next(
-            or(char1('(').next(expr).prev(char1(')')), number, variable)
+            or(char1('(').next(expr).prev(char1(')')), number, variable, function)
     ).prev(spaces);
 
-    // EBNF: assign = [spaces], variableName, [spaces], "=", expr
+    // EBNF: assign = [spaces], identifier, [spaces], "=", expr
     @SuppressWarnings("unchecked")
-    private final Parser<BigDecimal> assign = tryp((scnr) -> {
-        String varName = spaces.next(variableName).prev(spaces).parse(scnr);
+    private final Parser<BigDecimal> assign = tryp(scnr -> {
+        String varName = spaces.next(identifier).prev(spaces).parse(scnr);
         BigDecimal value = char1('=').next(expr).parse(scnr);
         globalScope.put(varName, value);
         return value;
