@@ -4,17 +4,21 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.control.ScrollPane?>
 
-<BorderPane xmlns:fx="https://github.com/henninltn"
+<ScrollPane xmlns:fx="https://github.com/henninltn"
             fx:controller="com.github.henninltn.sheet.Controller"
-            id="BorderPane" prefHeight="400" prefWidth="600">
-    <stylesheets>
-        <URL value="@sheet.css" />
-    </stylesheets>
-    <top>
-        <Label fx:id="outputArea" />
-    </top>
-    <center>
-        <TextArea fx:id="inputArea" />
-    </center>
-</BorderPane>
+            fx:id="ScrollPane" prefHeight="400" prefWidth="600"
+            minHeight="0" maxHeight="Infinity">
+    <BorderPane>
+        <stylesheets>
+            <URL value="@sheet.css" />
+        </stylesheets>
+        <top>
+            <Label fx:id="outputArea" />
+        </top>
+        <center>
+            <TextArea fx:id="inputArea" />
+        </center>
+    </BorderPane>
+</ScrollPane>

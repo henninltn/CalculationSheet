@@ -19,7 +19,7 @@ public class CalculationSheet extends Application {
         try {
             root = FXMLLoader.load(getClass().getResource("sheet/sheet.fxml"));
             primaryStage.setTitle("Calculation Sheet");
-            primaryStage.setScene(new Scene(root, 300, 275));
+            primaryStage.setScene(new Scene(root, 400, 600));
             primaryStage.show();
         } catch (IOException e) {
             e.printStackTrace();
