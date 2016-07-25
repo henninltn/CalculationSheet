@@ -4,6 +4,9 @@ import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * 変数のスコープ
+ */
 public class GlobalScope {
 
     public final static BigDecimal e = BigDecimal.valueOf(Math.E);
@@ -41,10 +44,21 @@ public class GlobalScope {
         scope.put("negativeInfinity", negativeInfinity);
     }
 
+    /**
+     * グローバルスコープに変数をセット
+     * @param key
+     * @param value
+     */
     public void put(String key, BigDecimal value) {
         scope.put(key, value);
     }
 
+    /**
+     * グローバルスコープから変数を取得
+     * @param key
+     * @return
+     * @throws Exception
+     */
     public BigDecimal get(String key) throws Exception {
         if (!scope.containsKey(key)) throw new Exception("variable not existed");
         return scope.get(key);

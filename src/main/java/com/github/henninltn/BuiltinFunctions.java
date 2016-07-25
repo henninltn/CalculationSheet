@@ -3,10 +3,19 @@ package com.github.henninltn;
 import static com.github.henninltn.GlobalScope.*;
 
 import java.math.BigDecimal;
-import java.util.DoubleSummaryStatistics;
 
+/**
+ * 組み込みの関数を提供
+ */
 class BuiltinFunctions {
 
+    /**
+     * 組み込み関数を文字列で指定して呼び出す
+     * @param funcName
+     * @param xs
+     * @return
+     * @throws Exception
+     */
     public static BigDecimal callByString(String funcName, BigDecimal... xs) throws Exception {
         BigDecimal ret = BigDecimal.ZERO;
         switch (funcName) {
@@ -42,7 +51,13 @@ class BuiltinFunctions {
         return x.divideAndRemainder(twoTimesPi)[1];
     }
 
+    /**
+     * Sin関数
+     * @param x
+     * @return
+     */
     private static BigDecimal sin(BigDecimal x) {
+        // そのままMath.sin関数を使うとdouble値のずれによって正しい値が出ないため調整
         BigDecimal unitRadian = getUnitRadian(x);
         if (unitRadian.compareTo(BigDecimal.ZERO) == 0 || unitRadian.compareTo(pi) == 0) return BigDecimal.ZERO;
         else if (unitRadian.compareTo(halfTimesPi) == 0) return BigDecimal.ONE;
@@ -50,7 +65,13 @@ class BuiltinFunctions {
         return BigDecimal.valueOf(Math.sin(x.doubleValue()));
     }
 
+    /**
+     * Cos関数
+     * @param x
+     * @return
+     */
     private static BigDecimal cos(BigDecimal x) {
+        // そのままMath.sin関数を使うとdouble値のずれによって正しい値が出ないため調整
         BigDecimal unitRadian = getUnitRadian(x);
         if (unitRadian.compareTo(halfTimesPi) == 0 || unitRadian.compareTo(three_halvesTimesPi) == 0) return BigDecimal.ZERO;
         else if (unitRadian.compareTo(BigDecimal.ZERO) == 0) return BigDecimal.ONE;
@@ -58,7 +79,13 @@ class BuiltinFunctions {
         return BigDecimal.valueOf(Math.sin(x.doubleValue()));
     }
 
+    /**
+     * Tan関数
+     * @param x
+     * @return
+     */
     private static BigDecimal tan(BigDecimal x) {
+        // そのままMath.sin関数を使うとdouble値のずれによって正しい値が出ないため調整
         BigDecimal unitRadian = getUnitRadian(x);
         if (unitRadian.compareTo(BigDecimal.ZERO) == 0 || unitRadian.compareTo(pi) == 0) return BigDecimal.ZERO;
         else if (unitRadian.compareTo(halfTimesPi) == 0)
@@ -68,11 +95,22 @@ class BuiltinFunctions {
         return BigDecimal.valueOf(Math.tan(x.doubleValue()));
     }
 
+    /**
+     * 対数関数
+     * @param x
+     * @return
+     */
     private static BigDecimal log(BigDecimal x) {
+        // そのままMath.sin関数を使うとdouble値のずれによって正しい値が出ないため調整
         if (x.compareTo(BigDecimal.ZERO) == 0) return negativeInfinity;
         return BigDecimal.valueOf(Math.log(x.doubleValue()));
     }
 
+    /**
+     * 指数関数
+     * @param x
+     * @return
+     */
     private static BigDecimal exp(BigDecimal x) {
         return BigDecimal.valueOf(Math.exp(x.doubleValue()));
     }

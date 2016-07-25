@@ -27,7 +27,6 @@ public class Evaluator {
     }
 
     private static final Function<List<Character>, BigDecimal> toBigDecimal = chrList -> BigDecimal.valueOf(Double.parseDouble(Parser.toString(chrList)));
-    private static final Function<Object, String> toString = obj -> Parser.toString(obj);
 
     private static final Parser<String> identifier  = tryp(scnr -> {
         String ret = String.valueOf(alpha.parse(scnr));
