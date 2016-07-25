@@ -24,6 +24,14 @@ class BuiltinFunctions {
                 if (xs.length != 1) throw new Exception("invalid number of arguments");
                 ret = tan(xs[0]);
                 break;
+            case "log":
+                if (xs.length != 1) throw new Exception("invalid number of arguments");
+                ret = log(xs[0]);
+                break;
+            case "exp":
+                if (xs.length != 1) throw new Exception("invalid number of arguments");
+                ret = log(xs[0]);
+                break;
             default:
                 throw new Exception("such function not existed");
         }
@@ -58,5 +66,14 @@ class BuiltinFunctions {
         else if (unitRadian.compareTo(three_halvesTimesPi) == 0)
             return negativeInfinity;
         return BigDecimal.valueOf(Math.tan(x.doubleValue()));
+    }
+
+    private static BigDecimal log(BigDecimal x) {
+        if (x.compareTo(BigDecimal.ZERO) == 0) return negativeInfinity;
+        return BigDecimal.valueOf(Math.log(x.doubleValue()));
+    }
+
+    private static BigDecimal exp(BigDecimal x) {
+        return BigDecimal.valueOf(Math.exp(x.doubleValue()));
     }
 }
